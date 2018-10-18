@@ -1,0 +1,54 @@
+{% load static %}
+
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% if request.path != '/' %}{% block title %}{% endblock %} | {% endif %}reversi!</title>
+    <!-- Bootstrap and GoogleFonts css -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Gloria+Hallelujah|M+PLUS+1p" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'game/css/base.css' %}">
+    <!-- added css -->
+    {% block add_css %}{% endblock %}
+</head>
+
+<body>
+    {% block nav %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'game:index' %}">ようこそ！{% if user.is_authenticated %}{{ user }}{% else %}ゲスト{% endif %}</a>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navber" aria-controls="Navber" aria-expanded="false"
+            aria-label="ナビゲーションの切替">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="Navber">
+            <ul class="navbar-nav mr-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">ログアウト</a></li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">ログイン</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'accounts:signup' %}">サインアップ</a></li>
+                {% endif %}
+                </li>
+            </ul>
+        </div>
+    </nav>
+    {% endblock %}
+
+    <div class="container-fluid">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Jquery and Bootstrap script -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <!-- added js -->
+    {% block add_js %}{% endblock %}
+</body>
+
+</html>

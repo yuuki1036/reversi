@@ -1,0 +1,13 @@
+myenv
+__pycache__
+staticfiles
+local_settings.py
+db.sqlite3
+*.py[co]
+/.idea/
+/tmp/
+/bin/
+*.test
+*.swp
+.DS_Store
+
