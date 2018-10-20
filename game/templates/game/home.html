@@ -6,8 +6,25 @@
 {% block content %}
 
 {{ form.certifications.errors }}
+　
 {% if user.is_authenticated %}
-<p>対戦回数:{{ user.userprofile.time }}</p>
+<p>ステータス</p>
+<div class="row">
+    <div class="col">
+        <p>対戦回数: {{ user.userprofile.play_count }}回</p>
+    </div>
+    <div class="col">
+        <p>勝ち: {{ user.userprofile.wins }}回</p>
+    </div>
+    <div class="col">
+        <p>負け: {{ user.userprofile.loses }}回</p>
+    </div>
+    <div class="col">
+        <p>ハイスコア: {{ user.userprofile.hi_score }}</p>
+    </div>
+</div>
+{% else %}
+<p class="text-center">ログインすると成績が見れます</p>
 {% endif %}
 
 
@@ -16,10 +33,10 @@
         <form method="post">
             {% csrf_token %}
             {{ form|crispy }}
-            <button type="submit" class="btn btn-success">GAME START</button>
+            <button type="submit" class="btn btn-outline-secondary text-center">GAME START</button>
         </form>
     </div>
 </div>
-<p><a href="{% url 'home:index' %}">back to title</a></p>
+<p class="text-center"><a href="{% url 'game:index' %}">タイトルにもどる</a></p>
 
 {% endblock %}

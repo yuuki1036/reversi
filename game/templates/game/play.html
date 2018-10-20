@@ -1,10 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
 
-</body>
-</html>
+
+{% block title %}play{% endblock %}
+
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'game/css/reversi.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="row text-center">
+    <div class="col">
+        <p>対戦モード: {% if set.mode.value == 'computer' %}ひとり{% else %}ふたり{% endif %}</p>
+    </div>
+    <div class="col">
+        <p>ヒントモード: {% if set.hint.value %}ON{% else %}OFF{% endif %}</p>
+    </div>
+</div>
+<div class="row text-center">
+    <div class="col">
+        <p>ターン: <span id="turn_display">{% if set.turn.value == 'you' %}あなた{% else %}相手{% endif %}</span></p>
+    </div>
+    <div class="col">
+        <p>いろ: <span id="color_display">{% if set.color.value == 'black' %}くろ{% else %}しろ{% endif %}</span></p>
+    </div>
+</div>
+
+<div class="set_val">
+    <p id="mode">{{ set.mode.value }}</p>
+    <p id="hint">{{ set.hint.value }}</p>
+    <p id="turn">{{ set.turn.value }}</p>
+    <p id="color">{{ set.color.value }}</p>
+</div>
+
+<div class="outer">
+    <div class="area">
+        <div class="block">
+            <div class="circle"></div>
+        </div>
+    </div>
+</div>
+<div class="row text-center">
+    <div class="col">
+        <a href="{% url 'game:play' %}">リトライ</a>
+    </div>
+    <div class="col">
+        <a href="{% url 'game:home' %}">ホームへもどる</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block add_js %}
+<script src="{% static 'game/js/jquery.color-2.1.2.min.js' %}"></script>
+<script src="{% static 'game/js/reversi.js' %}"></script>
+
+{% endblock %}

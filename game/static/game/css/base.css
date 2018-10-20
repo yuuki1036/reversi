@@ -28,6 +28,17 @@ a:hover {
     ext-decoration: none;
 }
 
+
+/******************
+common
+******************/
+
+.base-container {
+    max-width: 600px;
+    padding-top: 5vh;
+}
+
+
 /******************
 detail
 ******************/

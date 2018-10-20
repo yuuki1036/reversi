@@ -1,0 +1,39 @@
+@charset "utf-8";
+
+
+* {
+	box-sizing: border-box;
+}
+.outer {
+	text-align: center;
+}
+.area {
+	display: inline-block;
+	width:400px;
+	height: 400px;
+	font-size: 0;
+	border: 12px solid green;
+	background-color: green;
+}
+.block {
+	display: inline-block;
+	width: 47px;
+	height: 47px;
+	margin: 0;
+	padding: 0;
+	background-color: inherit;
+    cursor: pointer;
+}
+.circle {
+	width: 45px;
+	height: 45px;
+	border: 1px solid inherit;
+	border-radius: 30px;
+}
+.status {
+	visibility: hidden;
+}
+
+.set_val {
+	display: none;
+}
