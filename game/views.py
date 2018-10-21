@@ -31,6 +31,17 @@ def play(request):
     return render(request, 'game/play.html', context)
 
 
+def result(request):
+    d = json.load(request)
+    d['cnt_b'] = d['result'][0]
+    d['cnt_w'] = d['result'][1]
+    d['winner'] = d['result'][2]
+    print(d)
+    print("RENDER")
+    return render(request, 'game/result.html',d)
+
+
+
 drct = [(-1,-1), (-1,0), (-1,1), (0,1), (1,1), (1,0), (1,-1), (0,-1)]
 
 
@@ -81,20 +92,54 @@ def culc(request):
     puttable = search_puttable(d['board'], d['color'])
     d['puttable'] = puttable
 
+    def check_board():
+        cnt_b = 0
+        cnt_w = 0
+        for i in d['board']:
+            for j in i:
+                if j == 'W':
+                    cnt_w += 1
+                elif j == 'B':
+                    cnt_b += 1
+        if cnt_b == 0 or cnt_w == 0 or cnt_b + cnt_w == 64 or (d['status'] == 'pass_reach' and not d['puttable']):
+            d['status'] = 'end'
+        else:
+            d['status'] = 'continue'
+        return cnt_b, cnt_w
+
+    cnt_b, cnt_w = check_board()
+
+    if d['status'] == 'end':
+        if cnt_b > cnt_w:
+            winner = 'black'
+        elif cnt_b < cnt_w:
+            winner = 'white'
+        else:
+            winner = "drow"
+
+        d['result'] = [cnt_b, cnt_w, winner]
+        return JsonResponse(d)
+
     if not d['puttable']:
         d['status'] = 'pass'
+        return JsonResponse(d)
 
     if d['mode'] == 'computer' and d['turn'] == 'opp':
         max_length = 0
-        for i, arr in enumerate(['puttable']):
+        max_idx = 0
+        for i, arr in enumerate(d['puttable']):
             if len(arr) > max_length:
-                max_length = i
-        d['select'] = d['puttable'][max_length][0]
+                print(len(arr))
+                max_length = len(arr)
+                max_idx = i
+        d['select'] = d['puttable'][max_idx][0]
+        print(d['puttable'])
+        print(d['puttable'][max_idx])
+
     if d['status'] == 'initialize':
         d['status'] = 'continue'
         print(d)
+        print("OK")
         return JsonResponse(d)
 
-
-    print(d)
     return JsonResponse(d)

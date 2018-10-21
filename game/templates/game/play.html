@@ -32,11 +32,18 @@
     <p id="turn">{{ set.turn.value }}</p>
     <p id="color">{{ set.color.value }}</p>
 </div>
+<div class="container">
+    <p id="log">セットアップしています</p>
+    <button id="auto">オートモードOFF</button>
+
+</div>
 
 <div class="outer">
-    <div class="area">
-        <div class="block">
-            <div class="circle"></div>
+    <div class="area-border">
+        <div class="area">
+            <div class="block">
+                <div class="circle"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -52,6 +59,7 @@
 
 {% block add_js %}
 <script src="{% static 'game/js/jquery.color-2.1.2.min.js' %}"></script>
+<script src="{% static 'game/js/ajax_setup.js' %}"></script>
 <script src="{% static 'game/js/reversi.js' %}"></script>
 
 {% endblock %}
