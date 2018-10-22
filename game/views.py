@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
 from django.views import generic
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import GameSettingForm
+from .models import GameResult
 from django.http import JsonResponse
 import json
+
 
 
 class Index(generic.TemplateView):
@@ -22,6 +25,14 @@ def home(request):
     return render(request, 'game/home.html', context)
 
 
+class ResultList(generic.ListView, LoginRequiredMixin):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = GameResult
+    template_name = 'game/result_list.html'
+    context_object_name = "result"
+
+
 def play(request):
     session = GameSettingForm(request.session.get('form_data'))
     context = {'set': session}
@@ -33,12 +44,49 @@ def play(request):
 
 def result(request):
     d = json.load(request)
-    d['cnt_b'] = d['result'][0]
-    d['cnt_w'] = d['result'][1]
-    d['winner'] = d['result'][2]
-    print(d)
-    print("RENDER")
-    return render(request, 'game/result.html',d)
+    status = request.user.userprofile
+
+    if d['winner'] == 'drow':
+        win_or_lose = None
+    else:
+        if d['winner'] == d['you_color']:
+            win_or_lose = True
+
+        else:
+            win_or_lose = False
+
+    if d['you_color'] == 'black':
+        you_cnt = d['cnt_b']
+        opp_cnt = d['cnt_w']
+    else:
+        you_cnt = d['cnt_w']
+        opp_cnt = d['cnt_b']
+
+    result = {
+        'win_or_lose': win_or_lose,
+        'you_cnt': you_cnt,
+        'opp_cnt': opp_cnt,
+    }
+
+    if request.user.is_authenticated and d['mode'] == 'computer':
+        status.play_count += 1
+        if win_or_lose:
+            status.wins += 1
+        else:
+            status.loses += 1
+        status.save()
+
+        p = GameResult(
+            user=request.user,
+            name=request.user.username,
+            win_or_lose=win_or_lose,
+            stone=you_cnt,
+        )
+        p.save()
+
+    return JsonResponse(result)
+
+
 
 
 
@@ -61,7 +109,6 @@ def culc(request):
             rev_color = 'B'
 
         for d in drct:
-            dy, dx = y, x
             dy = y + d[0]
             dx = x + d[1]
             if 0 <= dy <= 7 and 0 <= dx <= 7 and board[dy][dx] == rev_color:
@@ -117,7 +164,9 @@ def culc(request):
         else:
             winner = "drow"
 
-        d['result'] = [cnt_b, cnt_w, winner]
+        d['cnt_b'] = cnt_b
+        d['cnt_w'] = cnt_w
+        d['winner'] = winner
         return JsonResponse(d)
 
     if not d['puttable']:
@@ -129,17 +178,12 @@ def culc(request):
         max_idx = 0
         for i, arr in enumerate(d['puttable']):
             if len(arr) > max_length:
-                print(len(arr))
                 max_length = len(arr)
                 max_idx = i
         d['select'] = d['puttable'][max_idx][0]
-        print(d['puttable'])
-        print(d['puttable'][max_idx])
 
     if d['status'] == 'initialize':
         d['status'] = 'continue'
-        print(d)
-        print("OK")
         return JsonResponse(d)
 
     return JsonResponse(d)

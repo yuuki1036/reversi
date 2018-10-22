@@ -3,12 +3,34 @@
 
 {% block title %}home{% endblock %}
 
-{% block content %}
+{% block nav %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'game:index' %}">ようこそ！{% if user.is_authenticated %}{{ user }}{% else %}ゲスト{% endif %}</a>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navber" aria-controls="Navber" aria-expanded="false"
+            aria-label="ナビゲーションの切替">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
+        <div class="collapse navbar-collapse" id="Navber">
+            <ul class="navbar-nav mr-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'game:result_list' %}">対戦履歴</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">ログアウト</a></li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">ログイン</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'accounts:signup' %}">サインアップ</a></li>
+                {% endif %}
+                </li>
+            </ul>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
 {{ form.certifications.errors }}
 　
 {% if user.is_authenticated %}
-<p>ステータス</p>
+<p>成績(VS COM)</p>
 <div class="row">
     <div class="col">
         <p>対戦回数: {{ user.userprofile.play_count }}回</p>

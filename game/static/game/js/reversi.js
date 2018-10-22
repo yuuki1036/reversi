@@ -121,22 +121,22 @@ let json_data = {
 	board: board,
 	puttable: null,
 	color: color,
+    you_color: you_color,
+    opp_color: opp_color,
 	turn: turn,
 	hint: hint,
     select: null,
-    result: null,
-    testmode: false,
-    count: 4,
+    testmode: true,
 };
 
 
 $('#auto').on('click', function(){
     if(json_data.testmode){
         json_data.testmode = false;
-        $(this).text("オートモードOFF")
+        $(this).text("OFF")
     }else{
         json_data.testmode = true;
-        $(this).text("オートモードON")
+        $(this).text("ON")
     }
 });
 
@@ -242,7 +242,7 @@ function PutStone(){
             json_data.status = 'pass_reach'
             json_data = JsonDataUpdate(json_data);
             AjaxExecution();
-        },2000);
+        },0);
 
     }else {
         $('.area').on('click', '.able', function () {
@@ -344,18 +344,34 @@ function Resolve(i) {
 function GameSet(json_data){
     JsonDataUpdate(json_data);
     let RESULT_MSG;
-    if(json_data.result[2] == you_color){
+    if(json_data.winner == you_color){
         RESULT_MSG = "あなた" + "の勝ちです";
     }else{
         RESULT_MSG = "相手" + "の勝ちです";
     }
     DisplayMsg(RESULT_MSG);
-    setTimeout(function(){
-        $.post({
+    $.ajax({
 		'url': "result/",
 		'type': 'POST',
 		'data': JSON.stringify(json_data),
 		'dataType': 'json',
-	});
-    },3000);
+	}).done(function(result){
+	    displayResult(result)
+    });
+    setTimeout(function(){
+        $('#result').click();
+    },1000);
+}
+
+function displayResult(result){
+    json_data = result;
+    if( json_data.win_or_lose){
+        $('#winner').text("あなたの" + "勝ち!!")
+    }else{
+        $('#winner').text("あなたの" + "負け")
+    }
+    $('#game-result').text(json_data.you_cnt + " - " + json_data.opp_cnt);
+
+
+
 }
