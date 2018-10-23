@@ -5,7 +5,7 @@
 
 {% block nav %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{% url 'game:index' %}">ようこそ！{% if user.is_authenticated %}{{ user }}{% else %}ゲスト{% endif %}</a>
+        <p class="navbar-brand gfont nav-p">welcome! {% if user.is_authenticated %}{{ user }}{% else %}guest{% endif %}</p>
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navber" aria-controls="Navber" aria-expanded="false"
             aria-label="ナビゲーションの切替">
             <span class="navbar-toggler-icon"></span>
@@ -13,6 +13,7 @@
 
         <div class="collapse navbar-collapse" id="Navber">
             <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'game:ranking' %}">ランキング</a></li>
                 {% if user.is_authenticated %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'game:result_list' %}">対戦履歴</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">ログアウト</a></li>
@@ -30,23 +31,25 @@
 {{ form.certifications.errors }}
 　
 {% if user.is_authenticated %}
-<p>成績(VS COM)</p>
-<div class="row">
-    <div class="col">
-        <p>対戦回数: {{ user.userprofile.play_count }}回</p>
-    </div>
-    <div class="col">
-        <p>勝ち: {{ user.userprofile.wins }}回</p>
-    </div>
-    <div class="col">
-        <p>負け: {{ user.userprofile.loses }}回</p>
-    </div>
-    <div class="col">
-        <p>ハイスコア: {{ user.userprofile.hi_score }}</p>
-    </div>
-</div>
+<ul class="List-group status text-center">
+    <li class="List-group-item-secondary active gfont">
+        your status (VS COM)
+    </li>
+    <li class="List-group-item gfont">
+        play count: {{ user.userprofile.play_count }}
+    </li>
+    <li class="List-group-item gfont">
+        win: {{ user.userprofile.wins }}
+    </li>
+    <li class="List-group-item gfont">
+        lose: {{ user.userprofile.loses }}
+    </li>
+    <li class="List-group-item gfont">
+        hi-score: {{ user.userprofile.hi_score }}
+    </li>
+</ul>
 {% else %}
-<p class="text-center">ログインすると成績が見れます</p>
+<p class="text-center">ログインするとゲームの結果が記録されるよ！</p>
 {% endif %}
 
 
@@ -55,10 +58,16 @@
         <form method="post">
             {% csrf_token %}
             {{ form|crispy }}
-            <button type="submit" class="btn btn-outline-secondary text-center">GAME START</button>
+            <div class="text-center">
+                <button type="submit" class="btn btn-outline-secondary text-center btn-block gfont">GAME START</button>
+            </div>
         </form>
     </div>
 </div>
-<p class="text-center"><a href="{% url 'game:index' %}">タイトルにもどる</a></p>
+
+<div class="text-center">
+    <a class="text-center" href="{% url 'game:index' %}">タイトルにもどる</a>
+</div>
+
 
 {% endblock %}

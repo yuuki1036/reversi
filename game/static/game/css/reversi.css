@@ -7,30 +7,30 @@
 .area-border{
 	box-sizing: content-box;
 	display: inline-block;
-	width: 760px;
-	height: 760px;
+	width: 520px;
+	height: 520px;
 	border:1px solid black;
 }
 .area {
 	display: inline-block;
-	width:760px;
-	height: 760px;
+	width:520px;
+	height: 520px;
 	font-size: 0;
 	border: 12px solid green;
 	background-color: green;
 }
 .block {
 	display: inline-block;
-	width: 92px;
-	height: 92px;
+	width: 62px;
+	height: 62px;
 	background-color: inherit;
     cursor: pointer;
 }
 .circle {
-	width: 90px;
-	height: 90px;
+	width: 60px;
+	height: 60px;
 	border: 1px solid inherit;
-	border-radius: 60px;
+	border-radius: 40px;
 }
 .set_val {
 	display: none;
@@ -39,31 +39,23 @@
 /******************
 media query
 ******************/
-
 @media (min-width: 374px) and (max-width: 761px) {
 		.area-border{
 		width: 372px;
 		height: 372px;
 	}
 	.area {
-		display: inline-block;
 		width:372px;
 		height: 372px;
-		font-size: 0;
 		border: 10px solid green;
-		background-color: green;
 	}
 	.block {
-		display: inline-block;
 		width: 44px;
 		height: 44px;
-		background-color: inherit;
-		cursor: pointer;
 	}
 	.circle {
 		width: 42px;
 		height:42px;
-		border: 1px solid inherit;
 		border-radius: 28px;
 	}
 }

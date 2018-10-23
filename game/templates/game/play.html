@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block nav %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <p class="navbar-brand gfont nav-p">welcome! {% if user.is_authenticated %}{{ user }}{% else %}guest{% endif %}</p>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navber" aria-controls="Navber" aria-expanded="false"
+            aria-label="ナビゲーションの切替">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="Navber">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'game:home' %}">ゲームをやめる</a></li>
+            </ul>
+        </div>
+    </nav>
+{% endblock %}
 
 {% block title %}play{% endblock %}
 
@@ -9,48 +24,16 @@
 {% endblock %}
 
 {% block content %}
-<!--
-<div class="row text-center">
-    <div class="col">
-        <p>対戦モード: {% if set.mode.value == 'computer' %}ひとり{% else %}ふたり{% endif %}</p>
-    </div>
-    <div class="col">
-        <p>ヒントモード: {% if set.hint.value %}ON{% else %}OFF{% endif %}</p>
-    </div>
-</div>
-<div class="row text-center">
-    <div class="col">
-        <p>ターン: <span id="turn_display">{% if set.turn.value == 'you' %}あなた{% else %}相手{% endif %}</span></p>
-    </div>
-    <div class="col">
-        <p>いろ: <span id="color_display">{% if set.color.value == 'black' %}くろ{% else %}しろ{% endif %}</span></p>
-    </div>
-</div>
--->
-
-
 
 <div class="set_val">
     <p id="mode">{{ set.mode.value }}</p>
     <p id="hint">{{ set.hint.value }}</p>
     <p id="turn">{{ set.turn.value }}</p>
     <p id="color">{{ set.color.value }}</p>
+    <p id="you_name">{% if user.is_authenticated %}{{ user }}{% else %}guest{% endif %}</p>
 </div>
-
-<div class="row">
-    <div class="col-6">
-        <p id="log">セットアップしています</p>
-    </div>
-    <div class="col-1">
-        <button id="auto">OFF</button>
-    </div>
-    <div class="col-2">
-        <a href="{% url 'game:play' %}">リトライ</a>
-    </div>
-    <div class="col-3">
-        <a href="{% url 'game:home' %}">ホームへもどる</a>
-    </div>
-
+<div class="container">
+    <p id="log">セットアップ中...</p>
 </div>
 
 <div class="outer">
@@ -62,8 +45,19 @@
         </div>
     </div>
 </div>
-
-
+<div class="container">
+<div class="row">
+    <div class="col-4">
+        <button id="auto">OFF</button>
+    </div>
+    <div class="col-4">
+        <a href="{% url 'game:play' %}">リトライ</a>
+    </div>
+    <div class="col-4">
+        <a href="{% url 'game:home' %}">ホームへ</a>
+    </div>
+</div>
+</div>
 <!-- Button trigger modal -->
 <input id="result" type="hidden" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
 
@@ -71,13 +65,16 @@
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalCenterTitle">RESULTS!!</h5>
-      </div>
       <div class="modal-body">
-          <div class="container-fluid">
-            <p id="winner">勝者</p>
-            <p id="game-result">結果</p>
+          <div class="container-fluid text-center">
+              <p class="h5 gfont ">RESULTS!</p>
+              <div class="py-2">
+                <p id="winner-name" class="h4 gfont text-center">勝者の名前</p>
+                <p id="game-result" class="h5 text-center gfont">石</p>
+                {% if set.mode.value == "computer" %}
+                  <p id="game-score" class="h5 text-center gfont">スコア</p>
+                {% endif %}
+              </div>
           </div>
           <div class="modal-footer">
               <a href="{% url 'game:play' %}" class="btn btn-outline-primary">リトライ</a>

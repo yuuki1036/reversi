@@ -17,8 +17,17 @@ const mode = $('#mode').text();//対戦モード
 const hint = $('#hint').text();//ヒントモード
 let color = $('#color').text();//現在の色
 let turn = $('#turn').text();//現在のターン
+let you_name = $('#you_name').text();
+let opp_name;
 let rev_color;//colorの反対色
 let you_color, opp_color;
+
+if(mode == 'computer'){
+    opp_name = 'COM'
+}else{
+    opp_name = '2player'
+}
+
 
 
 if(turn == 'opp'){
@@ -42,12 +51,7 @@ if(turn == 'opp'){
 }
 
 //rev_colorを定義する
-if(color == 'black'){
-    rev_color = 'white'
-}else{
-    rev_color = 'black'
-}
-
+rev_color = (color == 'black')? 'white': 'black';
 
 
 //盤面を作成する
@@ -80,22 +84,22 @@ for(let i=0; i<8; i++){
 $('.block:first').remove();//クローン元は削除する
 
 //石を初期配置に置く
-DisplaySetup(['33', '44'], color);
-DisplaySetup(['34', '43'], rev_color);
+displaySetup(['33', '44'], color);
+displaySetup(['34', '43'], rev_color);
 
 
-function DisplaySetup(put_list,color){
+function displaySetup(put_list,color){
     /*
     初期設定時の石の表示
     put_list: 石を置く番地の配列
     color: 置く石の色
      */
 	for(let i=0; i<put_list.length; i++){
-		PutAndReverse(put_list, color, i)
+		putAndReverse(put_list, color, i)
 	}
 }
 
-function PutAndReverse(put_list, color, i){
+function putAndReverse(put_list, color, i){
     let $this_block = $('.block').filter('#' + put_list[i]);
     let $this_circle = $this_block.find('.circle');
 
@@ -115,112 +119,109 @@ function PutAndReverse(put_list, color, i){
 
 
 //JSONデータ定義
-let json_data = {
-	mode: mode,
-	status: 'initialize',
-	board: board,
-	puttable: null,
-	color: color,
-    you_color: you_color,
-    opp_color: opp_color,
-	turn: turn,
-	hint: hint,
-    select: null,
-    testmode: true,
+let d = {
+	'mode': mode,
+	'status': 'initialize',
+	'board': board,
+	'puttable': null,
+	'color': color,
+    'you_name':you_name,
+    'opp_name': opp_name,
+    'you_color': you_color,
+    'opp_color': opp_color,
+	'turn': turn,
+	'hint': hint,
+    'select': null,
+    'result': null,
+    'testmode': false,
+    'score': 0,
 };
+
+if(mode == 'computer'){
+    if(hint == 'False'){
+        d.score += 1000
+    }
+}
 
 
 $('#auto').on('click', function(){
-    if(json_data.testmode){
-        json_data.testmode = false;
+    if(d.testmode){
+        d.testmode = false;
         $(this).text("OFF")
     }else{
-        json_data.testmode = true;
+        d.testmode = true;
         $(this).text("ON")
     }
 });
 
-let turn_msg = '',
-    color_msg = '';
+let turn_msg;
+let color_msg;
+let PASS_MSG;
+let TURN_MSG;
 
-function ChangeMsg(json_data){
-    if(json_data.turn == 'you'){
-        turn_msg = "あなた"
-    }else{
-        turn_msg = "相手"
-    }
-    if(json_data.color == 'black'){
-        color_msg = "黑"
-    }else{
-        color_msg = "白"
-    }
-}
 
-function DisplayMsg(msg){
+function displayMsg(msg){
     $('#log').fadeOut(100,function(){
         $('#log').text(msg).fadeIn(100)
     })
 }
 
-let TURN_MSG;
-ChangeMsg(json_data);
-if(json_data.turn == 'you'){
-    TURN_MSG = turn_msg + "の番です "+ you_color;
-}else{
-    TURN_MSG = turn_msg + "の番です "+ opp_color;
-}
 
-DisplayMsg(TURN_MSG);
+color_msg = (d.color == 'black')? "黑": "白";
+TURN_MSG = (d.turn == 'you')?
+        `${color_msg} ${d.you_name}の番です`:
+        `${color_msg} ${d.opp_name}の番です`;
+displayMsg(TURN_MSG);
 
 
-function AjaxExecution(){
-    AjaxSend(json_data).done(function(result){
-	AjaxRecieve(result);
+function ajaxExecution(){
+    ajaxSend(d).done(function(recieve){
+	ajaxRecieve(recieve);
     });
 }
 
-AjaxExecution();
+ajaxExecution();
 
 
-function AjaxSend(json_data){
+function ajaxSend(){
 	return $.ajax({
 		'url': "posts/",
 		'type': 'POST',
-		'data': JSON.stringify(json_data),
+		'data': JSON.stringify(d),
 		'dataType': 'json',
 	});
 }
 
-function AjaxRecieve(result){
-	json_data = result;
-    if(json_data.status == 'end'){
-        GameSet(json_data);
+function ajaxRecieve(recieve){
+	d = recieve;
+    if(d.status == 'end'){
+        gameSet();
         return
     }
 	$('.block').removeClass("able");
 
 
     if( hint == "True" ){
-        $('.block').css('background-color', 'inherit')
+        $('.block').css('background-color', 'inherit');
     }
-    for(let i=0; i<json_data.puttable.length; i++){
-        let this_block = $('.block').filter('#' + json_data.puttable[i][0]);
+    for(let i=0; i<d.puttable.length; i++){
+        let this_block = $('.block').filter('#' + d.puttable[i][0]);
         this_block.addClass("able");
-        if (hint == "True" && json_data.turn == 'you') {
+        if (hint == "True" && d.turn == 'you') {
             this_block.css('background-color', '#608030');
         }
     }
 
-    if(json_data.select){
+    if(d.select){
         setTimeout(function () {
 
-            PutStone();
-            $('.block').filter('#' + json_data.select).click();
+            putStone();
+            $('.block').filter('#' + d.select).click();
         },0);
     }else{
-        PutStone();
-        if(json_data.testmode && json_data.puttable){
-            $('.block').filter('#' + json_data.puttable[0][0]).click();
+        putStone();
+        if(d.testmode && d.puttable != []){
+            $('.block').filter('#' + d.puttable[0][0]).click();
         }
     }
 
@@ -230,110 +231,89 @@ function AjaxRecieve(result){
 
 
 
-function PutStone(){
-	let puttable = json_data.puttable;
-	let color = json_data.color;
+function putStone(){
 	let put_list;
 	let put_first;
-    if(json_data.status == 'pass'){
-        let PASS_MSG = "置ける場所がありません。" + turn_msg + "はパスになります。";
-        DisplayMsg(PASS_MSG);
+	let idx;
+    if(d.status == 'pass'){
+        PASS_MSG = `置ける場所がありません。${turn_msg}はパスになります。`;
+        displayMsg(PASS_MSG);
         setTimeout(function () {
-            json_data.status = 'pass_reach'
-            json_data = JsonDataUpdate(json_data);
-            AjaxExecution();
+            d.status = 'pass_reach'
+            d = jsonDataUpdate(d);
+            ajaxExecution();
         },0);
 
     }else {
         $('.area').on('click', '.able', function () {
             $('.area').off('click', '.able');
-            let idx = $(this).attr('id');
-            for (let i = 0; i < puttable.length; i++) {
-                if (idx == puttable[i][0]) {
-                    put_list = puttable[i];
+            idx = $(this).attr('id');
+            for (let i = 0; i < d.puttable.length; i++) {
+                if (idx == d.puttable[i][0]) {
+                    put_list = d.puttable[i];
                     put_first = [put_list[0]];
                     put_list.shift();
                     break;
                 }
             }
-            PutAndReverse(put_first, color, 0);
-            json_data.count += 1;
-            AsyncProcess(put_list, color).then((v) => {
-                json_data = JsonDataUpdate(json_data);
-                AjaxExecution();
+            if(d.turn == 'you'){
+                d.score += 2**(put_list.length+1);
+            }
+
+
+            putAndReverse(put_first, d.color, 0);
+            asyncProcess(put_list).then((v) => {
+                d = jsonDataUpdate();
+                ajaxExecution();
             });
         });
     }
 }
 
-function JsonDataUpdate(d){
-	d.board = board;
+function jsonDataUpdate(){
+    d.board = board;
 	d.puttable = null;
-
-	if(d.color == 'black'){
-		d.color = 'white'
-	}else{
-		d.color = 'black'
-	}
-
-	if( d.turn == 'you' ){
+	d.color = (d.color=='black')? 'white': 'black';
+	if(d.turn == 'you'){
 		d.turn = 'opp'
 	}else{
-		d.turn = 'you'
+		d.turn = 'you';
         d.select = null;
 	}
-	DisplayChange(d);
+	color_msg = (d.color == 'black')? "黑": "白";
+    TURN_MSG = (d.turn == 'you')?
+            `${color_msg} ${d.you_name}の番です`:
+            `${color_msg} ${d.opp_name}の番です`;
+    displayMsg(TURN_MSG);
 	return d;
 }
 
-function DisplayChange(d){
-    let $turn = $('#turn_display');
-    let $color = $('#color_display');
-    if(d.turn == 'you'){
-        $turn.text("あなた");
-    }else{
-        $turn.text("相手");
-    }
-    if(d.color == 'black'){
-        $color.text("くろ");
-    }else{
-        $color.text("しろ");
-    }
-    ChangeMsg(d);
-    if(d.turn == 'you'){
-    TURN_MSG = turn_msg + "の番です "+ you_color;
-}else{
-    TURN_MSG = turn_msg + "の番です "+ opp_color;
-}
-    DisplayMsg(TURN_MSG);
-}
-
-async function AsyncProcess(put_list,color){
+async function asyncProcess(put_list){
     for(let i=0; i<put_list.length; i++){
-        const result = await Resolve(i);
+        const result = await resolve(i);
 
         let $this_block = $('.block').filter('#' + put_list[i]);
         let $this_circle = $this_block.find('.circle');
         let idx = put_list[i].split('');
         $this_block.addClass('put');
 
-        if(color == 'white'){
+        if(d.color == 'white'){
             board[ Number(idx[0]) ][ Number(idx[1]) ] = 'W';
             $this_circle.animate({
-                backgroundColor: '#ffffff',
-                borderColor: '1px solid #000000',
+                backgroundColor: '#fff',
+                borderColor: '1px solid #000',
             },0);
         }else {
             board[Number(idx[0])][Number(idx[1])] = 'B';
             $this_circle.animate({
-                backgroundColor: '#000000',
+                backgroundColor: '#000',
                 borderColor: '1px solid #008000',
             },0);
         }
     }
 }
 
-function Resolve(i) {
+function resolve(i) {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve(i);
@@ -341,37 +321,33 @@ function Resolve(i) {
     })
 }
 
-function GameSet(json_data){
-    JsonDataUpdate(json_data);
-    let RESULT_MSG;
-    if(json_data.winner == you_color){
-        RESULT_MSG = "あなた" + "の勝ちです";
-    }else{
-        RESULT_MSG = "相手" + "の勝ちです";
-    }
-    DisplayMsg(RESULT_MSG);
+function gameSet(){
+    $('.block').css('background-color', 'inherit');
+    displayMsg("ゲームセット！");
     $.ajax({
 		'url': "result/",
 		'type': 'POST',
-		'data': JSON.stringify(json_data),
+		'data': JSON.stringify(d),
 		'dataType': 'json',
-	}).done(function(result){
-	    displayResult(result)
+	}).done(function(recieve){
+	    displayResult(recieve)
     });
     setTimeout(function(){
         $('#result').click();
     },1000);
 }
 
-function displayResult(result){
-    json_data = result;
-    if( json_data.win_or_lose){
-        $('#winner').text("あなたの" + "勝ち!!")
+function displayResult(recieve){
+    d = recieve;
+    if(d.win_or_lose == 'win'){
+        $('#winner-name').text(`winner ${d.you_name}!`);
+    }else if(d.win_or_lose == 'lose'){
+        $('#winner-name').text(`winner ${d.opp_name}!`);
     }else{
-        $('#winner').text("あなたの" + "負け")
+        $('#winner').text("DROW")
     }
-    $('#game-result').text(json_data.you_cnt + " - " + json_data.opp_cnt);
-
+    $('#game-result').text(`black${d.cnt_b} - white${d.cnt_w}`);
+    $('#game-score').text(`score => ${d.score}`);
 
 
 }

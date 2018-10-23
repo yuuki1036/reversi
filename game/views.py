@@ -30,7 +30,16 @@ class ResultList(generic.ListView, LoginRequiredMixin):
     redirect_field_name = 'redirect_to'
     model = GameResult
     template_name = 'game/result_list.html'
-    context_object_name = "result"
+    context_object_name = 'result'
+
+
+class Ranking(generic.ListView):
+    template_name = 'game/ranking.html'
+    context_object_name = 'result'
+
+    def get_queryset(self):
+        return GameResult.objects.filter(
+            win_or_lose='win').order_by('score').reverse()[:10]
 
 
 def play(request):
@@ -44,47 +53,40 @@ def play(request):
 
 def result(request):
     d = json.load(request)
-    status = request.user.userprofile
 
     if d['winner'] == 'drow':
-        win_or_lose = None
+        win_or_lose = 'drow'
     else:
         if d['winner'] == d['you_color']:
-            win_or_lose = True
-
+            win_or_lose = 'win'
         else:
-            win_or_lose = False
+            win_or_lose = 'lose'
 
-    if d['you_color'] == 'black':
-        you_cnt = d['cnt_b']
-        opp_cnt = d['cnt_w']
-    else:
-        you_cnt = d['cnt_w']
-        opp_cnt = d['cnt_b']
-
-    result = {
-        'win_or_lose': win_or_lose,
-        'you_cnt': you_cnt,
-        'opp_cnt': opp_cnt,
-    }
+        d['win_or_lose'] = win_or_lose
 
     if request.user.is_authenticated and d['mode'] == 'computer':
+        status = request.user.userprofile
         status.play_count += 1
-        if win_or_lose:
+        if win_or_lose == 'win':
+            d['score'] += 10000
             status.wins += 1
-        else:
+        elif win_or_lose == 'lose':
             status.loses += 1
+
+        if status.hi_score < d['score']:
+            status.hi_score = d['score']
         status.save()
 
         p = GameResult(
             user=request.user,
             name=request.user.username,
-            win_or_lose=win_or_lose,
-            stone=you_cnt,
+            win_or_lose=d['win_or_lose'],
+            stone=str(d['cnt_b']) + " - " + str(d['cnt_w']),
+            score=d['score'],
         )
         p.save()
 
-    return JsonResponse(result)
+    return JsonResponse(d)
 
 
 

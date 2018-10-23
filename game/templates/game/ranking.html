@@ -26,19 +26,15 @@
 {% block content %}
 {% if result %}
 <div class="text-center">
+    <p class="h5 gfont">reversi! RANKING</p>
     <ul class="List-group List-group-flush r-list">
         {% for post in result.all %}
-        <li class="List-group-item text-center">
-            勝敗&nbsp;
-            {% if post.win_or_lose == "win" %}勝ち
-            {% elif post.win_or_lose == "lose" %}負け
-            {% else %}引き分け
-            {% endif %}
-            &nbsp;&nbsp;結果&nbsp;
-            {{ post.stone }}
-            &nbsp;&nbsp;スコア&nbsp;
+        <li class="List-group-item text-center gfont">
+            {{ forloop.counter0|add:"1" }}&ensp;
+            {{ post.name }}&ensp;
+            {{ post.stone }}&ensp;
+            score&nbsp;
             {{ post.score }}
-
         </li>
         {% endfor %}
     </ul>
