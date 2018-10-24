@@ -8,11 +8,18 @@ Ajax通信でゲームの状況をサーバーに送信する。
 以下を盤面が埋まるまで繰り返す。
  */
 
-time = {
-    'reverse_time': 200,
-    'pass_time': 4000,
-    'com_time': 2500,
-}
+let reverse_time = 200;
+let pass_time = 4000;
+let com_time = 1000;
+let gameset_time =3000;
+
+let time = {
+    'reverse_time': reverse_time,
+    'pass_time': pass_time,
+    'com_time': com_time,
+    'gameset_time': gameset_time,
+};
+
 
 
 
@@ -123,7 +130,7 @@ function putAndReverse(put_list, color, i){
         $this_circle.css('border', '1px solid black');
     }else {
         board[Number(idx[0])][Number(idx[1])] = 'B';
-        $this_circle.css('border', '1px solid green');
+        $this_circle.css('border', '1px solid black');
     }
 }
 //初期設定終了
@@ -152,7 +159,7 @@ let d = {
 
 if(mode == 'computer'){
     if(hint == 'False'){
-        d.score += 1000
+        d.score += 3000
     }
 }
 
@@ -223,6 +230,18 @@ function ajaxRecieve(recieve){
         if (hint == "True" && d.turn == 'you') {
             this_block.css('background-color', '#608030');
         }
+    }
+    //テストモード　タイム切り替え
+    if(d.testmode){
+        time.reverse_time = 0;
+        time.pass_time = 0;
+        time.com_time = 0;
+        time.gameset_time = 0;
+    }else{
+        time.reverse_time = reverse_time;
+        time.pass_time = pass_time;
+        time.com_time = com_time;
+        time.gameset_time = gameset_time;
     }
 
     if(d.select){
@@ -319,7 +338,7 @@ async function asyncProcess(put_list){
             board[Number(idx[0])][Number(idx[1])] = 'B';
             $this_circle.animate({
                 backgroundColor: '#000',
-                borderColor: '1px solid #008000',
+                borderColor: '1px solid #000000',
             },time.reverse_time);
         }
     }
@@ -346,7 +365,7 @@ function gameSet(){
     });
     setTimeout(function(){
         $('#result').click();
-    },1000);
+    },time.gameset_time);
 }
 
 function displayResult(recieve){
