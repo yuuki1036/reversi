@@ -123,12 +123,11 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 
-
 # カスタムUserを使用
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # ログイン後トップページにリダイレクト
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/home/'
 
 # crispy-formsのテンプレート指定
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

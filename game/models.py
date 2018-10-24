@@ -12,4 +12,4 @@ class GameResult(models.Model):
     score = models.IntegerField(verbose_name="スコア")
 
     def __str__(self):
-        return "kekka"
+        return self.name

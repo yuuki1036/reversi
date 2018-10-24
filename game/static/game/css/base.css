@@ -5,7 +5,6 @@ initialize setting
 ******************/
 
 body {
-    width: 100vw;
     font-family: 'M PLUS 1p', sans-serif;
     background-color: cornsilk;
 }
@@ -16,10 +15,6 @@ body {
 
 ul {
     list-style: none;
-}
-
-html {
-  font-size: 1rem;
 }
 
 a {
@@ -33,14 +28,6 @@ a:hover {
 /******************
 common
 ******************/
-
-.base-container {
-    height: 100vh;
-    padding: 0 0 0 0;
-}
-.row {
-    max-width: 100vw;
-}
 .nav-p {
     margin-bottom: 0;
 }
@@ -49,21 +36,40 @@ common
 detail
 ******************/
 
-.logo-outer {
-    padding-top: 200px;
+.index-center {
+    margin-top: 20vh;
+}
+.logout-center {
+    margin-top: 25vh;
 }
 .logo {
     color: brown;
     letter-spacing: 0.2em;
 }
-.status li {
-    padding-top: 0;
-    padding-bottom: 0;
+.catch {
+    font-size: 1.1rem;
 }
-.r-list {
-    padding: 0 0 2vh 0;
+.logout {
+    font-size: 0.9rem;
 }
-
+.status {
+    background-color: honeydew;
+}
+#hint_id_password1 ul {
+    padding: 0;
+}
+.rank {
+    background-color: linen;
+}
+.one {
+    background-color: gold;
+}
+.two {
+    background-color: silver;
+}
+.three {
+    background-color: peru;
+}
 /******************
 media query
 ******************/

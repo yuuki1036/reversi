@@ -5,7 +5,7 @@ from .forms import GameSettingForm
 from .models import GameResult
 from django.http import JsonResponse
 import json
-
+import random
 
 
 class Index(generic.TemplateView):
@@ -31,6 +31,9 @@ class ResultList(generic.ListView, LoginRequiredMixin):
     model = GameResult
     template_name = 'game/result_list.html'
     context_object_name = 'result'
+
+    def get_queryset(self):
+        return GameResult.objects.order_by('pk').reverse()[:11]
 
 
 class Ranking(generic.ListView):
@@ -73,6 +76,9 @@ def result(request):
         elif win_or_lose == 'lose':
             status.loses += 1
 
+        status.winning_per = int(status.wins) / int(status.play_count) * 100
+        print(status.play_count)
+        print(status.wins)
         if status.hi_score < d['score']:
             status.hi_score = d['score']
         status.save()
@@ -158,6 +164,22 @@ def culc(request):
 
     cnt_b, cnt_w = check_board()
 
+    def com_culc(level):
+        if level == '1':
+            return random.choice(d['puttable'])[0]
+        else:
+            s_list = sorted(d['puttable'],key=lambda x: len(x), reverse=True)
+            if level == '2':
+                return s_list[0][0]
+            else:
+                top_priority = ['00', '07', '70', '77']
+                idx = 0
+                for i, arr in enumerate(s_list):
+                    if arr[0] in top_priority:
+                        idx = i
+                        break
+                return s_list[idx][0]
+
     if d['status'] == 'end':
         if cnt_b > cnt_w:
             winner = 'black'
@@ -176,13 +198,7 @@ def culc(request):
         return JsonResponse(d)
 
     if d['mode'] == 'computer' and d['turn'] == 'opp':
-        max_length = 0
-        max_idx = 0
-        for i, arr in enumerate(d['puttable']):
-            if len(arr) > max_length:
-                max_length = len(arr)
-                max_idx = i
-        d['select'] = d['puttable'][max_idx][0]
+        d['select'] = com_culc(d['strength'])
 
     if d['status'] == 'initialize':
         d['status'] = 'continue'

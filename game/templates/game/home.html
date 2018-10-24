@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title %}home{% endblock %}
@@ -21,6 +22,7 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">ログイン</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'accounts:signup' %}">サインアップ</a></li>
                 {% endif %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'game:index' %}">タイトルにもどる</a></li>
                 </li>
             </ul>
         </div>
@@ -30,44 +32,52 @@
 {% block content %}
 {{ form.certifications.errors }}
 　
-{% if user.is_authenticated %}
-<ul class="List-group status text-center">
-    <li class="List-group-item-secondary active gfont">
-        your status (VS COM)
-    </li>
-    <li class="List-group-item gfont">
-        play count: {{ user.userprofile.play_count }}
-    </li>
-    <li class="List-group-item gfont">
-        win: {{ user.userprofile.wins }}
-    </li>
-    <li class="List-group-item gfont">
-        lose: {{ user.userprofile.loses }}
-    </li>
-    <li class="List-group-item gfont">
-        hi-score: {{ user.userprofile.hi_score }}
-    </li>
-</ul>
-{% else %}
-<p class="text-center">ログインするとゲームの結果が記録されるよ！</p>
-{% endif %}
+<div class="container">
+    <div class="mb-2">
+        <p class="py-0 my-1">成績(VS COM)</p>
+        <div class="status row no-gutters border p-2">
+            {% if user.is_authenticated %}
+            <div class="col-6 col-md-3 d-inline-block">対戦回数 {{ user.userprofile.play_count }}回</div>
+            <div class="col-6 col-md-3">勝率 {{ user.userprofile.winning_per }}%</div>
+            <div class="col-6 col-md-3">勝ち {{ user.userprofile.wins }}回</div>
+            <div class="col-6 col-md-3">負け {{ user.userprofile.loses }}回</div>
+            <div class="col-12 col-md-3">ハイスコア {{ user.userprofile.hi_score }}</div>
+            {% else %}
+            <div class="col">ログインするとゲームの結果が記録されるよ！</div>
+            {% endif %}
+        </div>
+    </div>
 
-
-<div class="row">
-    <div class="col-12">
-        <form method="post">
+    <div class="mb-2">
+        <p class="py-0 my-1 mt-4">ゲーム設定</p>
+        <form class="m-0" method="post">
             {% csrf_token %}
-            {{ form|crispy }}
+            <div class="row">
+                <div class="col-6 col-md-12">
+                    {{ form.mode|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-12">
+                    {{ form.strength|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-12">
+                    {{ form.color|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-12">
+                    {{ form.turn|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ form.hint|as_crispy_field }}
+                </div>
+            </div>
             <div class="text-center">
-                <button type="submit" class="btn btn-outline-secondary text-center btn-block gfont">GAME START</button>
+                <button type="submit" class="btn btn-secondary text-center btn-block">GAME START</button>
             </div>
         </form>
     </div>
+
 </div>
+{% endblock %}
 
-<div class="text-center">
-    <a class="text-center" href="{% url 'game:index' %}">タイトルにもどる</a>
-</div>
-
-
+{% block add_js %}
+<script src="{% static 'game/js/home.js' %}"></script>
 {% endblock %}

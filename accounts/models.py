@@ -27,6 +27,10 @@ class UserProfile(models.Model):
         verbose_name="負けた数",
         default=0,
     )
+    winning_per = models.IntegerField(
+        verbose_name="勝率",
+        default=0,
+    )
     hi_score = models.IntegerField(
         verbose_name="ハイスコア",
         default=0

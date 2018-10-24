@@ -3,9 +3,9 @@
 {% block title %}Logout{% endblock %}
 
 {% block content %}
-<div class="text-center">
-    <h2 class="gfont">Logged Out</h2>
-    <p class="gfont">Thanks for spending some quality time with the Web site today.</p>
-    <p><a href="{% url 'game:index' %}">タイトルにもどる</a></p>
+<div class="container logout-center text-center">
+    <p class="h2 gfont mb-3">Logged Out</p>
+    <p class="gfont logout">Thanks for spending some quality time with the Web site today.</p>
+    <a class="btn btn-outline-secondary" href="{% url 'game:index' %}">タイトルにもどる</a></p>
 </div>
 {% endblock %}

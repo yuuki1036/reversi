@@ -10,8 +10,9 @@
 
     <div class="collapse navbar-collapse" id="Navber">
         <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="{% url 'game:ranking' %}">ランキング</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'game:home' %}">ホームへもどる</a></li>
             {% if user.is_authenticated %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'game:result_list' %}">対戦履歴</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">ログアウト</a></li>
             {% else %}
             <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">ログイン</a></li>
@@ -25,27 +26,23 @@
 
 {% block content %}
 {% if result %}
-<div class="text-center">
-    <ul class="List-group List-group-flush r-list">
-        {% for post in result.all %}
-        <li class="List-group-item text-center">
-            勝敗&nbsp;
+<div class="container text-center">
+    <p class="h5 gfont my-3">play history</p>
+    {% for post in result.all %}
+    <div class="row no-gutters rank border p-2">
+        <div class="col-3 font-weight-bold">
             {% if post.win_or_lose == "win" %}勝ち
             {% elif post.win_or_lose == "lose" %}負け
             {% else %}引き分け
             {% endif %}
-            &nbsp;&nbsp;結果&nbsp;
-            {{ post.stone }}
-            &nbsp;&nbsp;スコア&nbsp;
-            {{ post.score }}
-
-        </li>
-        {% endfor %}
-    </ul>
+        </div>
+        <div class="col-3">{{ post.stone }}</div>
+        <div class="col-6">スコア {{ post.score }}</div>
+    </div>
+    {% endfor %}
     {% else %}
-    <p>まだ遊んでないよ！</p>
+    <div>まだ遊んでないよ！</div>
     {% endif %}
-
-    <a href="{% url 'game:home' %}" class="btn btn-outline-secondary text-center">ホームへもどる</a>
+    <a href="{% url 'game:home' %}" class="btn btn-outline-secondary mt-3">ホームへもどる</a>
 </div>
 {% endblock %}

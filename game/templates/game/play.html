@@ -27,13 +27,15 @@
 
 <div class="set_val">
     <p id="mode">{{ set.mode.value }}</p>
+    <p id="strength">{{ set.strength.value }}</p>
     <p id="hint">{{ set.hint.value }}</p>
     <p id="turn">{{ set.turn.value }}</p>
     <p id="color">{{ set.color.value }}</p>
     <p id="you_name">{% if user.is_authenticated %}{{ user }}{% else %}guest{% endif %}</p>
 </div>
-<div class="container">
-    <p id="log">セットアップ中...</p>
+
+<div class="container text-center">
+    <p id="log" class="h5 pt-5 pb-3">セットアップ中...</p>
 </div>
 
 <div class="outer">
@@ -45,18 +47,19 @@
         </div>
     </div>
 </div>
-<div class="container">
-<div class="row">
-    <div class="col-4">
-        <button id="auto">OFF</button>
+
+<div class="container text-center">
+    <div class="row">
+        <div class="col-4">
+            <button id="auto">OFF</button>
+        </div>
+        <div class="col-4">
+            <a href="{% url 'game:play' %}">リトライ</a>
+        </div>
+        <div class="col-4">
+            <a href="{% url 'game:home' %}">ホームへ</a>
+        </div>
     </div>
-    <div class="col-4">
-        <a href="{% url 'game:play' %}">リトライ</a>
-    </div>
-    <div class="col-4">
-        <a href="{% url 'game:home' %}">ホームへ</a>
-    </div>
-</div>
 </div>
 <!-- Button trigger modal -->
 <input id="result" type="hidden" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -67,13 +70,14 @@
     <div class="modal-content">
       <div class="modal-body">
           <div class="container-fluid text-center">
-              <p class="h5 gfont ">RESULTS!</p>
-              <div class="py-2">
-                <p id="winner-name" class="h4 gfont text-center">勝者の名前</p>
-                <p id="game-result" class="h5 text-center gfont">石</p>
-                {% if set.mode.value == "computer" %}
-                  <p id="game-score" class="h5 text-center gfont">スコア</p>
-                {% endif %}
+              <p class="h5 gfont">RESULTS!</p>
+              <div class="container py-2">
+                  <p id="winner-name" class="h3 mb-0">勝者の名前</p>
+                  <p id="which" class="mt-0 mb-3">どっち？</p>
+                  <p id="game-result" class="mb-0">石</p>
+                  {% if set.mode.value == "computer" %}
+                  <p id="game-score" class="mb-2">スコア</p>
+                  {% endif %}
               </div>
           </div>
           <div class="modal-footer">

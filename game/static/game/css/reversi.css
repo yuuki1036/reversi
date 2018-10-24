@@ -35,6 +35,9 @@
 .set_val {
 	display: none;
 }
+#which {
+	font-size: 0.9rem;
+}
 
 /******************
 media query

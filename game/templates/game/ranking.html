@@ -11,6 +11,7 @@
     <div class="collapse navbar-collapse" id="Navber">
         <ul class="navbar-nav mr-auto">
             {% if user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'game:home' %}">ホームへもどる</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'game:result_list' %}">対戦履歴</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">ログアウト</a></li>
             {% else %}
@@ -25,23 +26,21 @@
 
 {% block content %}
 {% if result %}
-<div class="text-center">
-    <p class="h5 gfont">reversi! RANKING</p>
-    <ul class="List-group List-group-flush r-list">
-        {% for post in result.all %}
-        <li class="List-group-item text-center gfont">
-            {{ forloop.counter0|add:"1" }}&ensp;
-            {{ post.name }}&ensp;
-            {{ post.stone }}&ensp;
-            score&nbsp;
-            {{ post.score }}
-        </li>
-        {% endfor %}
-    </ul>
+<div class="container text-center">
+<p class="h5 gfont my-3">RANKING</p>
+{% for post in result.all %}
+<div class="row no-gutters rank border text-center p-2 {% if forloop.counter0 == 0 %}one{% elif forloop.counter0 == 1 %}two{% elif forloop.counter0 == 2 %}three{% endif %}">
+    <div class="col-1 font-weight-bold">{{ forloop.counter0|add:"1" }}</div>
+    <div class="col-4">{{ post.name }}</div>
+    <div class="col-4">{{ post.stone }}</div>
+    <div class="col-3">{{ post.score }}</div>
+</div>
+{% endfor %}
     {% else %}
     <p>まだ遊んでないよ！</p>
     {% endif %}
 
-    <a href="{% url 'game:home' %}" class="btn btn-outline-secondary text-center">ホームへもどる</a>
+
+    <a href="{% url 'game:home' %}" class="btn btn-outline-secondary mt-3">ホームへもどる</a>
 </div>
-{% endblock %}
+    {% endblock %}

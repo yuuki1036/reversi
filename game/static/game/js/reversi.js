@@ -8,12 +8,17 @@ Ajax通信でゲームの状況をサーバーに送信する。
 以下を盤面が埋まるまで繰り返す。
  */
 
-
+time = {
+    'reverse_time': 200,
+    'pass_time': 4000,
+    'com_time': 2500,
+}
 
 
 
 //ゲーム設定を定義する
 const mode = $('#mode').text();//対戦モード
+const strength = $('#strength').text();//COMの強さ
 const hint = $('#hint').text();//ヒントモード
 let color = $('#color').text();//現在の色
 let turn = $('#turn').text();//現在のターン
@@ -23,7 +28,13 @@ let rev_color;//colorの反対色
 let you_color, opp_color;
 
 if(mode == 'computer'){
-    opp_name = 'COM'
+    if(strength == '1'){
+        opp_name = "よわ太郎"
+    }else if(strength == '2'){
+        opp_name = "ふつう市民"
+    }else{
+        opp_name = 'つよ男爵'
+    }
 }else{
     opp_name = '2player'
 }
@@ -112,6 +123,7 @@ function putAndReverse(put_list, color, i){
         $this_circle.css('border', '1px solid black');
     }else {
         board[Number(idx[0])][Number(idx[1])] = 'B';
+        $this_circle.css('border', '1px solid green');
     }
 }
 //初期設定終了
@@ -121,6 +133,7 @@ function putAndReverse(put_list, color, i){
 //JSONデータ定義
 let d = {
 	'mode': mode,
+    'strength': strength,
 	'status': 'initialize',
 	'board': board,
 	'puttable': null,
@@ -167,7 +180,7 @@ function displayMsg(msg){
 }
 
 
-color_msg = (d.color == 'black')? "黑": "白";
+color_msg = (d.color == 'black')? "黒": "白";
 TURN_MSG = (d.turn == 'you')?
         `${color_msg} ${d.you_name}の番です`:
         `${color_msg} ${d.opp_name}の番です`;
@@ -214,13 +227,12 @@ function ajaxRecieve(recieve){
 
     if(d.select){
         setTimeout(function () {
-
             putStone();
             $('.block').filter('#' + d.select).click();
-        },0);
+        },time.com_time);
     }else{
         putStone();
-        if(d.testmode && d.puttable != []){
+        if(d.testmode){
             $('.block').filter('#' + d.puttable[0][0]).click();
         }
     }
@@ -242,7 +254,7 @@ function putStone(){
             d.status = 'pass_reach'
             d = jsonDataUpdate(d);
             ajaxExecution();
-        },0);
+        },time.pass_time);
 
     }else {
         $('.area').on('click', '.able', function () {
@@ -280,7 +292,7 @@ function jsonDataUpdate(){
 		d.turn = 'you';
         d.select = null;
 	}
-	color_msg = (d.color == 'black')? "黑": "白";
+	color_msg = (d.color == 'black')? "黒": "白";
     TURN_MSG = (d.turn == 'you')?
             `${color_msg} ${d.you_name}の番です`:
             `${color_msg} ${d.opp_name}の番です`;
@@ -300,15 +312,15 @@ async function asyncProcess(put_list){
         if(d.color == 'white'){
             board[ Number(idx[0]) ][ Number(idx[1]) ] = 'W';
             $this_circle.animate({
-                backgroundColor: '#fff',
-                borderColor: '1px solid #000',
-            },0);
+                backgroundColor: '#ffffff',
+                borderColor: '1px solid #000000',
+            },time.reverse_time);
         }else {
             board[Number(idx[0])][Number(idx[1])] = 'B';
             $this_circle.animate({
                 backgroundColor: '#000',
                 borderColor: '1px solid #008000',
-            },0);
+            },time.reverse_time);
         }
     }
 }
@@ -317,7 +329,7 @@ function resolve(i) {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve(i);
-        }, 0);
+        }, time.reverse_time);
     })
 }
 
@@ -340,14 +352,15 @@ function gameSet(){
 function displayResult(recieve){
     d = recieve;
     if(d.win_or_lose == 'win'){
-        $('#winner-name').text(`winner ${d.you_name}!`);
+        $('#winner-name').text(`${d.you_name}の勝ち!`);
+        $('#which').text("あなたの勝ちです");
     }else if(d.win_or_lose == 'lose'){
-        $('#winner-name').text(`winner ${d.opp_name}!`);
+        $('#winner-name').text(`${d.opp_name}の勝ち!`);
+        $('#which').text("あなたの負けです");
     }else{
-        $('#winner').text("DROW")
+        $('#winner-name').text(`引き分け!`);
+        $('#which').hidden();
     }
-    $('#game-result').text(`black${d.cnt_b} - white${d.cnt_w}`);
-    $('#game-score').text(`score => ${d.score}`);
-
-
+    $('#game-result').text(`黒 ${d.cnt_b} - 白 ${d.cnt_w}`);
+    $('#game-score').text(`スコア ${d.score}`);
 }
