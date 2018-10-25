@@ -31,7 +31,7 @@
     {% for post in result.all %}
     <div class="row no-gutters rank border text-center p-2 {% if forloop.counter0 == 0 %}one{% elif forloop.counter0 == 1 %}two{% elif forloop.counter0 == 2 %}three{% endif %}">
         <div class="col-1 font-weight-bold">{{ forloop.counter0|add:"1" }}</div>
-        <div class="col-4">{{ post.name }}</div>
+        <div class="col-4 font-weight-bold">{{ post.name }}</div>
         <div class="col-4">{{ post.stone }}</div>
         <div class="col-3">{{ post.score }}</div>
     </div>
