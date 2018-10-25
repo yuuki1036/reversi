@@ -7,5 +7,52 @@
     <p class="logo gfont display-4">reversi!</p>
     <p class="catch gfont description lead">This is the worldwide "himatsubushi" tool.<br>And we become smarter Unbeknownst!</p>
     <a class="btn btn-outline-secondary btn-lg" href="{% url 'game:home' %}">とりあえずあそぶ</a>
+
+<!-- Button trigger modal -->
+    <div class="text-right mt-5">
+        <button type="button" class="btn btn-info btn-sm mt-5" data-toggle="modal" data-target="#exampleModalLong">
+          このアプリについて
+        </button>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">このアプリについて</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>閲覧いただきありがとうございます。<br>
+            このアプリは藤岡勇樹が勉強および就活のために作ったものです。pythonフレームワークのdjangoで作りました。<br>
+            <br>
+            &lt;仕様&gt;<br>
+            　シンプルなリバーシゲーム<br>
+            　ユーザー認証<br>
+            　対戦モード２つ<br>
+            　COMの強さ選択可能<br>
+            　置ける場所が分かるヒント機能<br>
+            　対戦履歴の参照およびランキング<br>
+            <br>
+            &lt;学んだこと&gt;<br>
+            　webアプリの構造<br>
+            　サーバーの仕事<br>
+            　ユーザー認証の仕組み<br>
+            　データベース<br>
+            　Ajax通信<br>
+            　github<br>
+            　bootstrap<br>
+            <br>
+            ソースコードは<a href="https://github.com/yuuki1036/reversi" target="_blank">こちら</a>です。
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

@@ -4,9 +4,9 @@
 function changeDiabled() {
     if($('select[name="mode"]').val() == 'person'){
         $('select[name="strength"]').prop('disabled', true);
-        $('#div_id_strength').css('color', 'grey');
+        $('#div_id_strength').css('color', 'gainsboro');
         $('input[name="hint"]').prop('disabled', true);
-        $('#div_id_hint').css('color', 'grey');
+        $('#div_id_hint').css('color', 'gainsboro');
     }else{
         $('select[name="strength"]').prop('disabled', false);
         $('#div_id_strength').css('color', 'inherit');
