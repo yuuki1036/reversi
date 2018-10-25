@@ -8,10 +8,11 @@ Ajax通信でゲームの状況をサーバーに送信する。
 以下を盤面が埋まるまで繰り返す。
  */
 
-let reverse_time = 200;
-let pass_time = 4000;
-let com_time = 1000;
-let gameset_time =3000;
+//デュレーションタイム設定
+let reverse_time = 200;//石がひっくり返る時間
+let pass_time = 4000;//パス時の停止時間
+let com_time = 1000;//COMの停止時間
+let gameset_time =3000;//ゲーム修了時の停止時間
 
 let time = {
     'reverse_time': reverse_time,
@@ -20,20 +21,18 @@ let time = {
     'gameset_time': gameset_time,
 };
 
-
-
-
-//ゲーム設定を定義する
+//ゲーム設定をHTMLから読み取る
 const mode = $('#mode').text();//対戦モード
 const strength = $('#strength').text();//COMの強さ
 const hint = $('#hint').text();//ヒントモード
 let color = $('#color').text();//現在の色
 let turn = $('#turn').text();//現在のターン
-let you_name = $('#you_name').text();
-let opp_name;
+let you_name = $('#you_name').text();//ユーザー名
+let opp_name;//相手の名前
 let rev_color;//colorの反対色
-let you_color, opp_color;
+let you_color, opp_color;//自分の色、相手の色
 
+//相手の名前を定義する
 if(mode == 'computer'){
     if(strength == '1'){
         opp_name = "よわ太郎"
@@ -43,11 +42,10 @@ if(mode == 'computer'){
         opp_name = 'つよ男爵'
     }
 }else{
-    opp_name = '2player'
+    opp_name = '相手'
 }
 
-
-
+//自分と相手の色を定義する
 if(turn == 'opp'){
     if(color == 'black'){
         color = 'white';
@@ -74,7 +72,7 @@ rev_color = (color == 'black')? 'white': 'black';
 
 //盤面を作成する
 let $block = $('.block');//クリック要素になるマス目(div)
-let board = new Array(8);//盤面の状態を表す配列
+let board = new Array(8);//盤面の状態を表す二次元配列
 
 //マス目を64個複製し、HTMLに追加する。
 for(let i=0; i<8; i++){
@@ -83,8 +81,7 @@ for(let i=0; i<8; i++){
 		let $clone = $block.clone();
 		$clone.attr('id', '' + i + j)//番地を表すIDを設定
 			.css({'border': '1px solid black'});//マス目の枠線
-        //位置による枠線の違い
-		if(i == 0){
+		if(i == 0){　//位置による枠線の違い
 			$clone.css({'border-top': '2px solid black'});
 		}
 		if(i == 7){
@@ -107,25 +104,25 @@ displaySetup(['34', '43'], rev_color);
 
 
 function displaySetup(put_list,color){
-    /*
-    初期設定時の石の表示
-    put_list: 石を置く番地の配列
-    color: 置く石の色
-     */
 	for(let i=0; i<put_list.length; i++){
-		putAndReverse(put_list, color, i)
+		put(put_list, color, i)
 	}
 }
 
-function putAndReverse(put_list, color, i){
+function put(put_list, color, i){
+    /*
+    遅延なしで盤面に石を置く。
+    put_list: 石を置く番地の配列
+    color: 置く石の色
+    i: index
+     */
     let $this_block = $('.block').filter('#' + put_list[i]);
-    let $this_circle = $this_block.find('.circle');
+    let $this_circle = $this_block.find('.circle');//blockの子要素circle
 
-    $this_block.addClass('put');
     $this_circle.css('background-color', color);
     let idx = put_list[i].split('');
 
-    if(color == 'white'){
+    if(color == 'white'){ //色ごとの処理
         board[ Number(idx[0]) ][ Number(idx[1]) ] = 'W';
         $this_circle.css('border', '1px solid black');
     }else {
@@ -136,34 +133,42 @@ function putAndReverse(put_list, color, i){
 //初期設定終了
 
 
+/*
+JSONデータを作成、各種設定後 ajaxでサーバーに送る
+ */
 
 //JSONデータ定義
 let d = {
-	'mode': mode,
-    'strength': strength,
-	'status': 'initialize',
-	'board': board,
-	'puttable': null,
-	'color': color,
+	'mode': mode,//対戦モード
+    'strength': strength,//対COM時の強さ
+	'status': 'initialize',//ゲームの状況
+	'board': board,//盤面を表すの配列
+	'puttable': null,//石を置ける番地リスト
+	'color': color,//現在のターンの色
     'you_name':you_name,
     'opp_name': opp_name,
     'you_color': you_color,
     'opp_color': opp_color,
-	'turn': turn,
-	'hint': hint,
-    'select': null,
-    'result': null,
-    'testmode': false,
-    'score': 0,
+	'turn': turn,//現在のターン
+	'hint': hint,// ヒントモードのON OFF
+    'select': null,//COMが選択した番地
+    'score': 0,//スコア
+    'testmode': false,//テストモードのON OFF
 };
 
+//VS COM時のスコア加算
 if(mode == 'computer'){
     if(hint == 'False'){
-        d.score += 3000
+        d.score += 3000;
+    }
+    if(strength == '2'){
+        d.score += 5000;
+    }else if(strength == '3'){
+        d.score += 8000;
     }
 }
 
-
+//テストモードボタンのイベント設定
 $('#auto').on('click', function(){
     if(d.testmode){
         d.testmode = false;
@@ -174,35 +179,35 @@ $('#auto').on('click', function(){
     }
 });
 
-let turn_msg;
-let color_msg;
-let PASS_MSG;
-let TURN_MSG;
+//HTML表示用
+let color_msg;//黒 or 白
+let PASS_MSG;//パス時のログメッセージ
+let TURN_MSG;//ターンのログメッセージ
 
-
+//HTML上のログメッセージの表示
 function displayMsg(msg){
     $('#log').fadeOut(100,function(){
         $('#log').text(msg).fadeIn(100)
     })
 }
 
-
+//ターンのログメッセージ作成
 color_msg = (d.color == 'black')? "黒": "白";
 TURN_MSG = (d.turn == 'you')?
         `${color_msg} ${d.you_name}の番です`:
         `${color_msg} ${d.opp_name}の番です`;
 displayMsg(TURN_MSG);
 
-
+//ajaxを送信して受信する関数
 function ajaxExecution(){
     ajaxSend(d).done(function(recieve){
 	ajaxRecieve(recieve);
     });
 }
 
-ajaxExecution();
+ajaxExecution();//ajax初回送信
 
-
+//JSONデータを送信する
 function ajaxSend(){
 	return $.ajax({
 		'url': "posts/",
@@ -212,26 +217,29 @@ function ajaxSend(){
 	});
 }
 
+//JSONデータ受信後
 function ajaxRecieve(recieve){
-	d = recieve;
-    if(d.status == 'end'){
+    /*
+    状況に応じて設定を変更する
+     */
+	d = recieve;//JSONデータ更新
+    if(d.status == 'end'){ //ゲーム終了時
         gameSet();
         return
     }
-	$('.block').removeClass("able");
-
-
-    if( hint == "True" ){
-        $('.block').css('background-color', 'inherit');
+    if( hint == "True" ){ //ヒントモードON時
+        $('.block').css('background-color', 'inherit');// ヒントカラー初期化
     }
+    $('.block').removeClass("able");//設置可能番地クラス初期化
+    //puttableの格配列の先頭は設置可能番地を表すのでableクラスを付与する
     for(let i=0; i<d.puttable.length; i++){
         let this_block = $('.block').filter('#' + d.puttable[i][0]);
         this_block.addClass("able");
-        if (hint == "True" && d.turn == 'you') {
+        if (hint == "True" && d.turn == 'you') { //ヒントカラーにする
             this_block.css('background-color', '#608030');
         }
     }
-    //テストモード　タイム切り替え
+    //テストモード時のデュレーションタイム切り替え
     if(d.testmode){
         time.reverse_time = 0;
         time.pass_time = 0;
@@ -243,9 +251,9 @@ function ajaxRecieve(recieve){
         time.com_time = com_time;
         time.gameset_time = gameset_time;
     }
-
-    if(d.select){
-        setTimeout(function () {
+    //クリックイベントを設定する
+    if(d.select){ //VS COM時かつターンがCOM
+        setTimeout(function () { //COMターン時のデュレーション
             putStone();
             $('.block').filter('#' + d.select).click();
         },time.com_time);
@@ -255,52 +263,84 @@ function ajaxRecieve(recieve){
             $('.block').filter('#' + d.puttable[0][0]).click();
         }
     }
-
-
 }
 
-
-
-
+//設置可能番地にクリックイベントを設定する
 function putStone(){
-	let put_list;
-	let put_first;
+	let put_list;//ひっくり返る番地
+	let put_first;//置く番地
 	let idx;
-    if(d.status == 'pass'){
-        PASS_MSG = `置ける場所がありません。${turn_msg}はパスになります。`;
+
+    if(d.status == 'pass'){ //パス時の処理
+        PASS_MSG = (d.turn == 'you')?
+            `${color_msg} ${d.you_name}はパスします`:
+            `${color_msg} ${d.opp_name}はパスします`;
         displayMsg(PASS_MSG);
         setTimeout(function () {
-            d.status = 'pass_reach'
+            d.status = 'pass_reach';//２連続パスはゲーム終了なのでリーチ
             d = jsonDataUpdate(d);
             ajaxExecution();
+            return
         },time.pass_time);
-
     }else {
-        $('.area').on('click', '.able', function () {
-            $('.area').off('click', '.able');
+        $('.area').on('click', '.able', function(){
+            $('.area').off('click', '.able');//クリックイベント初期化
             idx = $(this).attr('id');
-            for (let i = 0; i < d.puttable.length; i++) {
+            //番地とputtableを照合する
+            for(let i = 0; i < d.puttable.length; i++){
                 if (idx == d.puttable[i][0]) {
                     put_list = d.puttable[i];
-                    put_first = [put_list[0]];
-                    put_list.shift();
+                    put_first = [put_list[0]];//置く番地
+                    put_list.shift();//ひっくり返る番地リスト
                     break;
                 }
             }
-            if(d.turn == 'you'){
+            if(d.turn == 'you'){ //ひっくり返った数でスコア加算
                 d.score += 2**(put_list.length+1);
             }
-
-
-            putAndReverse(put_first, d.color, 0);
-            asyncProcess(put_list).then((v) => {
-                d = jsonDataUpdate();
+            put(put_first, d.color, 0);//石を置く
+            //非同期処理（一つずつ石をひっくり返す）
+            asyncReverse(put_list).then((v) => {
+                d = jsonDataUpdate();//データ更新
+                //以後 送信=>受信=>イベント設定=>送信を繰り返す
                 ajaxExecution();
             });
         });
     }
 }
 
+//非同期処理 関数putとほぼ同じ
+async function asyncReverse(put_list){
+    for(let i=0; i<put_list.length; i++){
+        const result = await resolve(i);//応答があるまで停止
+
+        let $this_block = $('.block').filter('#' + put_list[i]);
+        let $this_circle = $this_block.find('.circle');
+        let idx = put_list[i].split('');
+        if(d.color == 'white'){
+            board[ Number(idx[0]) ][ Number(idx[1]) ] = 'W';
+            $this_circle.animate({
+                backgroundColor: '#ffffff',
+                borderColor: '1px solid #000000',
+            }, time.reverse_time);
+        }else {
+            board[ Number(idx[0]) ][ Number(idx[1]) ] = 'B';
+            $this_circle.animate({
+                backgroundColor: '#000',
+                borderColor: '1px solid #000000',
+            }, time.reverse_time);
+        }
+    }
+}
+function resolve(i) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(i);
+        }, time.reverse_time);
+    })
+}
+
+//描画終了後のJSONデータ更新
 function jsonDataUpdate(){
     d.board = board;
 	d.puttable = null;
@@ -316,46 +356,14 @@ function jsonDataUpdate(){
             `${color_msg} ${d.you_name}の番です`:
             `${color_msg} ${d.opp_name}の番です`;
     displayMsg(TURN_MSG);
-	return d;
+	return d;//更新したJSONデータを返す
 }
 
-async function asyncProcess(put_list){
-    for(let i=0; i<put_list.length; i++){
-        const result = await resolve(i);
-
-        let $this_block = $('.block').filter('#' + put_list[i]);
-        let $this_circle = $this_block.find('.circle');
-        let idx = put_list[i].split('');
-        $this_block.addClass('put');
-
-        if(d.color == 'white'){
-            board[ Number(idx[0]) ][ Number(idx[1]) ] = 'W';
-            $this_circle.animate({
-                backgroundColor: '#ffffff',
-                borderColor: '1px solid #000000',
-            },time.reverse_time);
-        }else {
-            board[Number(idx[0])][Number(idx[1])] = 'B';
-            $this_circle.animate({
-                backgroundColor: '#000',
-                borderColor: '1px solid #000000',
-            },time.reverse_time);
-        }
-    }
-}
-
-function resolve(i) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve(i);
-        }, time.reverse_time);
-    })
-}
-
+//ゲーム終了時に実行
 function gameSet(){
     $('.block').css('background-color', 'inherit');
     displayMsg("ゲームセット！");
-    $.ajax({
+    $.ajax({ //結果を送信
 		'url': "result/",
 		'type': 'POST',
 		'data': JSON.stringify(d),
@@ -364,10 +372,10 @@ function gameSet(){
 	    displayResult(recieve)
     });
     setTimeout(function(){
-        $('#result').click();
+        $('#result').click();//RESULT画面表示
     },time.gameset_time);
 }
-
+//RESULT画面に結果を反映
 function displayResult(recieve){
     d = recieve;
     if(d.win_or_lose == 'win'){
@@ -378,7 +386,7 @@ function displayResult(recieve){
         $('#which').text("あなたの負けです");
     }else{
         $('#winner-name').text(`引き分け!`);
-        $('#which').hidden();
+        $('#which').hide();
     }
     $('#game-result').text(`黒 ${d.cnt_b} - 白 ${d.cnt_w}`);
     $('#game-score').text(`スコア ${d.score}`);

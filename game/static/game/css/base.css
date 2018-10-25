@@ -3,27 +3,23 @@
 /******************
 initialize setting
 ******************/
-
 body {
     font-family: 'M PLUS 1p', sans-serif;
     background-color: cornsilk;
 }
-.gfont {
+.gfont { /*手書きフォント*/
     font-family: 'Gloria Hallelujah', cursive;
     letter-spacing: 0.1em;
 }
-
 ul {
     list-style: none;
 }
-
 a {
     text-decoration: none;
 }
 a:hover {
     ext-decoration: none;
 }
-
 
 /******************
 common
@@ -35,7 +31,6 @@ common
 /******************
 detail
 ******************/
-
 .index-center {
     margin-top: 20vh;
 }
@@ -58,6 +53,9 @@ detail
 #hint_id_password1 ul {
     padding: 0;
 }
+.alert-danger ul {
+    padding: 0;
+}
 .rank {
     background-color: linen;
 }
@@ -70,6 +68,3 @@ detail
 .three {
     background-color: peru;
 }
-/******************
-media query
-******************/

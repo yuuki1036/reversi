@@ -11,7 +11,7 @@
 
         <div class="collapse navbar-collapse" id="Navber">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a class="nav-link" href="{% url 'game:home' %}">ゲームをやめる</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'game:home' %}">ホームへもどる</a></li>
             </ul>
         </div>
     </nav>
@@ -25,6 +25,7 @@
 
 {% block content %}
 
+<!-- gamesetting is hidden -->
 <div class="set_val">
     <p id="mode">{{ set.mode.value }}</p>
     <p id="strength">{{ set.strength.value }}</p>
@@ -48,6 +49,7 @@
     </div>
 </div>
 
+<!-- debug -->
 <div class="container text-center">
     <div class="row">
         <div class="col-4">
@@ -61,10 +63,12 @@
         </div>
     </div>
 </div>
+<!-- end debug -->
+
 <!-- Button trigger modal -->
 <input id="result" type="hidden" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
 
-<!-- Modal -->
+<!-- result modal window -->
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">

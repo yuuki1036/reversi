@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Log in{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block nav %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <p class="navbar-brand gfont">who are you?</p>
+        <p class="navbar-brand gfont nav-p">who are you?</p>
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navber" aria-controls="Navber" aria-expanded="false"
             aria-label="ナビゲーションの切替">
             <span class="navbar-toggler-icon"></span>
@@ -31,16 +31,16 @@
     <p class="h3 text-center gfont mt-5 mb-3">Login</p>
     <section class="common-form">
         {% if form.errors %}
-        <p class="error-msg">ユーザー 名とパスワードが合いません！</p>
+        <p class="error-msg">ユーザー名とパスワードが合いません！</p>
         {% endif %}
 
         {% if next %}
-        {% if user.is_authenticated %}
-        <p class="error-msg">Your account doesn't have access to this page. To proceed,
-            please login with an account that has access.</p>
-        {% else %}
-        <p class="error-msg">Please login to see this page.</p>
-        {% endif %}
+            {% if user.is_authenticated %}
+            <p class="error-msg">Your account doesn't have access to this page. To proceed,
+                please login with an account that has access.</p>
+            {% else %}
+            <p class="error-msg">Please login to see this page.</p>
+            {% endif %}
         {% endif %}
 
         <form method="post" action="{% url 'login' %}">

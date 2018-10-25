@@ -31,7 +31,6 @@
 
 {% block content %}
 {{ form.certifications.errors }}
-　
 <div class="container">
     <div class="mb-2">
         <p class="py-0 my-1">成績(VS COM)</p>
@@ -43,7 +42,7 @@
             <div class="col-6 col-md-3">負け {{ user.userprofile.loses }}回</div>
             <div class="col-12 col-md-3">ハイスコア {{ user.userprofile.hi_score }}</div>
             {% else %}
-            <div class="col">ログインするとゲームの結果が記録されるよ</div>
+            <div class="col">ログインすると対戦結果が記録されるよ！</div>
             {% endif %}
         </div>
     </div>

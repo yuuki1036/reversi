@@ -2,7 +2,7 @@
 
 {% block nav %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand gfont" href="{% url 'game:index' %}">welcome! {% if user.is_authenticated %}{{ user }}{% else %}guest{% endif %}</a>
+    <a class="navbar-brand gfont nav-p" href="{% url 'game:index' %}">welcome! {% if user.is_authenticated %}{{ user }}{% else %}guest{% endif %}</a>
     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navber" aria-controls="Navber" aria-expanded="false"
         aria-label="ナビゲーションの切替">
         <span class="navbar-toggler-icon"></span>
@@ -10,8 +10,8 @@
 
     <div class="collapse navbar-collapse" id="Navber">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item"><a class="nav-link" href="{% url 'game:ranking' %}">ランキング</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'game:home' %}">ホームへもどる</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'game:ranking' %}">ランキング</a></li>
             {% if user.is_authenticated %}
             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">ログアウト</a></li>
             {% else %}
@@ -25,9 +25,9 @@
 {% endblock %}
 
 {% block content %}
-{% if result %}
 <div class="container text-center">
     <p class="h5 gfont my-3">play history</p>
+    {% if result %}
     {% for post in result.all %}
     <div class="row no-gutters rank border p-2">
         <div class="col-3 font-weight-bold">
@@ -41,7 +41,7 @@
     </div>
     {% endfor %}
     {% else %}
-    <div>まだ遊んでないよ！</div>
+    <p class="my-5">まだ遊んでないよ！</p>
     {% endif %}
     <a href="{% url 'game:home' %}" class="btn btn-outline-secondary mt-3">ホームへもどる</a>
 </div>

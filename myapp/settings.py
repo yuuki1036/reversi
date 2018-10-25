@@ -57,7 +57,7 @@ ROOT_URLCONF = 'myapp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')], # ディレクトリ直下
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,7 +131,6 @@ LOGIN_REDIRECT_URL = '/home/'
 
 # crispy-formsのテンプレート指定
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
 
 # heroku用のセッティング
 DEBUG = False
