@@ -100,11 +100,11 @@ def result(request): # ゲーム修了時のajax受信先
     return JsonResponse(d)
 
 
-# culc用変数
+# calculate用変数
 drct = [(-1,-1), (-1,0), (-1,1), (0,1), (1,1), (1,0), (1,-1), (0,-1)]
 
 
-def culc(request): # ajax受信先
+def calculate(request): # ajax受信先
     '''
     盤面よりゲームの状況を決定する
     石設置可能番地とひっくり返る石の番地を計算する
@@ -184,7 +184,7 @@ def culc(request): # ajax受信先
     cnt_b, cnt_w = check_board()
 
     # COMの選択を決定する
-    def com_culc(level):
+    def com_calc(level):
         if level == '1': # LEVEL1はランダム
             return random.choice(d['puttable'])[0]
         else: # LEVEL2,LEVEL3はひっくり返せる数が最も多い位置を選択する
@@ -221,7 +221,7 @@ def culc(request): # ajax受信先
 
     # COMの選択を決定する
     if d['mode'] == 'computer' and d['turn'] == 'opp':
-        d['select'] = com_culc(d['strength'])
+        d['select'] = com_calc(d['strength'])
 
     # 一回目の受信完了。ステータスを変更する
     if d['status'] == 'initialize':

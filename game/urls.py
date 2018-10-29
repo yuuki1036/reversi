@@ -9,6 +9,6 @@ urlpatterns = [
     path('result_list/', views.ResultList.as_view(), name="result_list"),
     path('ranking/', views.Ranking.as_view(), name='ranking'),
     path('play/', views.play, name='play'),
-    path('play/posts/', views.culc, name='posts'),# ajax受信先
+    path('play/posts/', views.calculate, name='posts'),# ajax受信先
     path('play/result/', views.result, name='result'),# ゲーム修了時
 ]

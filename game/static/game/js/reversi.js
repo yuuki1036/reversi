@@ -109,13 +109,8 @@ function displaySetup(put_list,color){
 	}
 }
 
+//アニメーション無しで石を置く
 function put(put_list, color, i){
-    /*
-    遅延なしで盤面に石を置く。
-    put_list: 石を置く番地の配列
-    color: 置く石の色
-    i: index
-     */
     let $this_block = $('.block').filter('#' + put_list[i]);
     let $this_circle = $this_block.find('.circle');//blockの子要素circle
 
