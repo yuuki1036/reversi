@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'accounts',
     'game',
     'crispy_forms',
+    'crispy_bootstrap4',
 ]
 
 MIDDLEWARE = [
@@ -112,8 +113,6 @@ TIME_ZONE = 'Asia/Tokyo'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = False
 
 
@@ -121,6 +120,9 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# 主キーの型（既存の migration と同じ AutoField に固定）
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 
 # カスタムUserを使用
@@ -130,6 +132,7 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 LOGIN_REDIRECT_URL = '/home/'
 
 # crispy-formsのテンプレート指定
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # heroku用のセッティング
@@ -143,3 +146,12 @@ except ImportError:
 if not DEBUG:
     import django_heroku
     django_heroku.settings(locals())
+    # Django 5.1 で STATICFILES_STORAGE が廃止されたため STORAGES で指定する
+    STORAGES = {
+        'default': {
+            'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        },
+    }
